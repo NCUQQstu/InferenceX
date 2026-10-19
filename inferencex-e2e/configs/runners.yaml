@@ -766,19 +766,10 @@ clusters:
           default_bash_preamble: |-
             export XDG_CACHE_HOME="/tmp/xdg-cache-$SLURM_JOB_ID"
             export TRITON_CACHE_DIR="/tmp/triton-cache-$SLURM_JOB_ID"
-  mi355x-amds:
+mi355x-amds:
     gpus-per-node: 8
-    available-cpu-dram-mib: 3_095_781
+    available-cpu-dram-mib: 3_079_397
     arch: x86_64
-    env:
-      MORI_RDMA_TC: '@fabric.rdma-tc'
-    models:
-      entries:
-        Kimi-K3: {root: it-share-data, dir: Kimi-K3}
-        DeepSeek-R1-0528-MXFP4-v2: {root: it-share-data, dir: DeepSeek-R1-0528-MXFP4-v2}
-        DeepSeek-V4-Pro-0813: {root: it-share-data, dir: DeepSeek-V4-Pro-0813}
-        GLM-5.3: {root: it-share-data, dir: GLM-5.3}
-        Qwen3.5-397B-A17B-FP8: {root: it-share-data, dir: Qwen3.5-397B-A17B-FP8}
     scheduler: slurm
     slurm:
       partition: compute
@@ -787,39 +778,27 @@ clusters:
       cpus-per-task: 128
       srun-args: [--container-remap-root, --container-writable]
       volumes:
-        hf-hub-cache: {path: /var/lib/hf-hub-cache, visibility: node-local}
-        shared-hf-hub-cache: {path: /it-share/hf-hub-cache}
-        aiperf-cache: {path: /it-share/aiperf-cache}
-        it-share-data: {path: /it-share/data}
+        hf-hub-cache: {path: /home/smc/infx/hf-hub-cache, visibility: node-local}
+        shared-hf-hub-cache: {path: /home/smc/infx/hf-hub-cache}
+        aiperf-cache: {path: /home/smc/infx/aiperf-cache}
+        it-share-data: {path: /home/smc/infx/data}
       squash:
-        dir: /it-share/gharunners2/srt-slurm/containers
+        dir: /home/smc/infx/containers
         visibility: shared
         import: compute
         multi-node-import: false
       srt-slurm:
         workspace-mounts: *amd-exporter-config
-        network-interface: eno0
-        fabric:
-          rdma-devices: [rdma0, rdma1, rdma2, rdma3, rdma4, rdma5, rdma6, rdma7]
-          socket-ifname: [eno0]
-          rdma-gid-index: 1
-          rdma-tc: 104
+        network-interface: enp81s0f0np0
         single-node-time-limit: 500
         gpus-per-node-directive: true
         segment-directive: false
-        outputs: /it-share/gharunners2/srt-slurm/outputs
-        host-setup:
-          script: runners/srt-slurm/hooks/mi355x-amds/setup.sh
-          env:
-            IBDEVICES: '@fabric.rdma-devices'
-          timeout-s: 1200
-          nodes: all
+        outputs: /home/smc/infx/outputs
         volume-mounts:
           shared-hf-hub-cache: /hf_hub_cache/hub
         mounts:
           /dev/kfd: /dev/kfd
           /dev/dri: /dev/dri
-          /it-share/hf_home: /it-share/hf_home
         extra:
           visible_devices_env: ROCR_VISIBLE_DEVICES
           default_gpu_exporter: *amd-exporter
