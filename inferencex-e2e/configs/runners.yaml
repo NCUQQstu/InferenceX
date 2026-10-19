@@ -766,7 +766,7 @@ clusters:
           default_bash_preamble: |-
             export XDG_CACHE_HOME="/tmp/xdg-cache-$SLURM_JOB_ID"
             export TRITON_CACHE_DIR="/tmp/triton-cache-$SLURM_JOB_ID"
-mi355x-amds:
+  mi355x-amds:
     gpus-per-node: 8
     available-cpu-dram-mib: 3_079_397
     arch: x86_64
@@ -802,4 +802,4 @@ mi355x-amds:
         extra:
           visible_devices_env: ROCR_VISIBLE_DEVICES
           default_gpu_exporter: *amd-exporter
-          nginx_raise_ulimit: false
+          nginx_raise_ulimit: false            
