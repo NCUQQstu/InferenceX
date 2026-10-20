@@ -794,6 +794,10 @@ clusters:
         gpus-per-node-directive: true
         segment-directive: false
         outputs: /home/smc/infx/outputs
+        host-setup:
+          script: runners/srt-slurm/hooks/mi355x-local/setup.sh
+          timeout-s: 1200
+          nodes: all
         volume-mounts:
           shared-hf-hub-cache: /hf_hub_cache/hub
         mounts:
@@ -802,4 +806,4 @@ clusters:
         extra:
           visible_devices_env: ROCR_VISIBLE_DEVICES
           default_gpu_exporter: *amd-exporter
-          nginx_raise_ulimit: false            
+          nginx_raise_ulimit: false
