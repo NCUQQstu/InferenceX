@@ -766,10 +766,14 @@ clusters:
           default_bash_preamble: |-
             export XDG_CACHE_HOME="/tmp/xdg-cache-$SLURM_JOB_ID"
             export TRITON_CACHE_DIR="/tmp/triton-cache-$SLURM_JOB_ID"
-  mi355x-amds:
+ mi355x-amds:
     gpus-per-node: 8
     available-cpu-dram-mib: 3_079_397
     arch: x86_64
+    models:
+      entries:
+        Kimi-K3: {root: it-share-data, dir: Kimi-K3}
+        GLM-5.2-MXFP4: {root: it-share-data, dir: GLM-5.2-MXFP4}
     scheduler: slurm
     slurm:
       partition: compute
@@ -781,7 +785,7 @@ clusters:
         hf-hub-cache: {path: /home/smc/infx/hf-hub-cache, visibility: node-local}
         shared-hf-hub-cache: {path: /home/smc/infx/hf-hub-cache}
         aiperf-cache: {path: /home/smc/infx/aiperf-cache}
-        it-share-data: {path: /home/smc/infx/data}
+        it-share-data: {path: /data}
       squash:
         dir: /home/smc/infx/containers
         visibility: shared
@@ -790,6 +794,9 @@ clusters:
       srt-slurm:
         workspace-mounts: *amd-exporter-config
         network-interface: enp81s0f0np0
+        single-node-models: staged
+        # ATOM frontend image = same digest as rocm/atom-dev:nightly_202610131505; reuse its pre-imported sqsh
+        container-aliases: ['rocm/atom-dev@sha256:b78300a6caf6c1fec3b1f27b4f7333326c9d34911bfc7ae229d13d2ebbc43884']
         single-node-time-limit: 500
         gpus-per-node-directive: true
         segment-directive: false
