@@ -9,6 +9,18 @@ set -eo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/../common.sh"
 wait_for_amd_gpu_clean
 
+# Automatic NUMA balancing faults and migrates the pinned host pages behind a DRAM
+# KV tier while the GPUs DMA into them, stalling every decode step that offloads.
+numa_balancing=/proc/sys/kernel/numa_balancing
+if [[ "$(cat "$numa_balancing")" != 0 ]]; then
+    printf '0\n' | sudo -n tee "$numa_balancing" >/dev/null 2>&1 || true
+fi
+if [[ "$(cat "$numa_balancing")" != 0 ]]; then
+    echo "kernel.numa_balancing is enabled and could not be disabled; run" \
+        "'sudo sysctl -w kernel.numa_balancing=0' on $(hostname)" >&2
+    exit 1
+fi
+
 # Some MI355X experiments reserve large 2 MiB HugeTLB pools and leave the
 # reservation behind after their Slurm allocation exits. Those free hugepages
 # remain unavailable to ordinary host allocations, which can make a later
