@@ -803,6 +803,8 @@ clusters:
         workspace-mounts: *amd-exporter-config
         network-interface: enp81s0f0np0
         single-node-models: staged
+        # ATOM frontend image = same digest as rocm/atom-dev:nightly_202610131505; reuse its pre-imported sqsh
+        container-aliases: ['rocm/atom-dev@sha256:b78300a6caf6c1fec3b1f27b4f7333326c9d34911bfc7ae229d13d2ebbc43884']
         single-node-time-limit: 500
         gpus-per-node-directive: true
         segment-directive: false
