@@ -136,6 +136,27 @@ override_tp8_c4_dcp8_simple:
       KV_OFFLOADING: 'dram'
       TOTAL_CPU_DRAM_GB: '1799'
 
+# Diagnostic control for override_tp8_c4_dcp8_simple: the same dcp8 server with the
+# SimpleCPUOffload DRAM tier removed, isolating DCP8 decode cost from KV offload.
+override_tp8_c4_dcp8_nooffload:
+  roles:
+    agg:
+      args:
+        decode-context-parallel-size: 8
+        dcp-comm-backend: a2a
+        max-num-seqs: 8
+        max-num-batched-tokens: 8192
+        compilation-config: '{"mode":3,"cudagraph_mode":"FULL_AND_PIECEWISE","max_cudagraph_capture_size":48,"custom_ops":["+fused_rms_norm_gated"],"cudagraph_capture_sizes":[2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48]}'
+        speculative-config: '{"model":"Inferact/Kimi-K3-DSpark","num_speculative_tokens":5,"method":"dspark","attention_backend":"ROCM_AITER_MLA","kv_cache_dtype":"fp8","draft_sample_method":"probabilistic","rejection_sample_method":"block"}'
+        quantization-config: '{"targets":{"*in_proj_qkvgfab":"fp8_per_channel"}}'
+      env:
+        VLLM_USE_BREAKABLE_CUDAGRAPH: '0'
+        NCCL_DEBUG: INFO
+  benchmark:
+    env:
+      CONC: '4'
+      KV_OFFLOADING: 'none'
+
 override_tp8_c10_dcp8_simple:
   roles:
     agg:

@@ -758,6 +758,23 @@ kimik3-fp4-mi355x-vllm-agentic-mtp:
       - { tp: 8, ep: 1, dcp-size: 1, kv-offloading: none, conc-list: [1, 4], spec-decoding: mtp, srt-recipe: agentic.yaml }
       - { tp: 8, ep: 1, dcp-size: 8, kv-offloading: dram, kv-offload-backend: { name: vllm-simple }, conc-list: [4, 10, 16, 24, 32, 48, 52, 60], spec-decoding: mtp, srt-recipe: agentic.yaml }
 
+# Diagnostic control: dcp8 c4 without the DRAM tier, against the dcp8 + DRAM c4 point
+# of kimik3-fp4-mi355x-vllm-agentic-mtp.
+kimik3-fp4-mi355x-vllm-agentic-mtp-dcp8-nooffload:
+  image: vllm/vllm-openai-rocm:nightly-rocm100-49cb2bbf71cfd36ee5aa33d1e184b1cddff55294
+  model: moonshotai/Kimi-K3
+  model-prefix: kimik3
+  runner: cluster:mi355x-amds
+  precision: fp4
+  framework: vllm
+  multinode: false
+  srt-recipe-dir: kimik3/vllm/mi355x-fp4-mtp
+  scenarios:
+    agentic-coding:
+    - dram-utilization: 0.6
+      search-space:
+      - { tp: 8, ep: 1, dcp-size: 8, kv-offloading: none, conc-list: [4], spec-decoding: mtp, srt-recipe: agentic.yaml }
+
 minimaxm3-fp4-mi355x-atom-agentic-mtp:
   image: rocm/atom-dev:nightly_202610070333
   model: amd/MiniMax-M3-MXFP4
